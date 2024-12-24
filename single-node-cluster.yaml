@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+  kafka-1:
+    image: "bitnami/kafka:3.4.0"
+    hostname: kafka-1
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+      - KAFKA_ENABLE_KRAFT=yes
+      - KAFKA_CFG_PROCESS_ROLES=broker,controller
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,CONTROLLER:PLAINTEXT,INTERNAL:PLAINTEXT
+      - KAFKA_BROKER_ID=1
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-1:9094
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_KRAFT_CLUSTER_ID=EATEPCK6RZq-1b9ipL2WFA
+      - KAFKA_CFG_KRAFT_REPLICATION_FACTOR=1
+      - KAFKA_CFG_NODE_ID=1
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-1:9093,INTERNAL://kafka-1:9092
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://0.0.0.0:9093,CONTROLLER://0.0.0.0:9094,INTERNAL://0.0.0.0:9092
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL
+      - KAFKA_CFG_DEFAULT_REPLICATION_FACTOR=1
+    ports:
+      - "9101:9092"
+      - "9102:9093"
+      - "9103:9094"
+    volumes:
+      - kafka1-data:/bitnami/kafka
+    healthcheck:
+      test: [ "CMD", "bash", "-c", "echo > /dev/tcp/kafka-1/9093" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - kafka-net
+
+  kowl:
+    image: quay.io/cloudhut/kowl:latest
+    ports:
+      - "8081:8080"  # Host's 8081 mapped to container's 8080
+    environment:
+      KAFKA_BROKERS: "kafka-1:9093"
+      KAFKA_VERSION: "3.4.0"
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+    networks:
+      - kafka-net
+
+
+volumes:
+  kafka1-data:
+
+
+networks:
+  kafka-net:
+    driver: bridge
