@@ -19,3 +19,8 @@ Producers can choose how Kafka confirms the delivery of messages using three ack
     
     The producer waits until all in-sync replicas confirm receipt. 
     This ensures maximum data safety but may increase delay.
+
+
+![image](https://github.com/user-attachments/assets/2eb7f1ba-8cc7-46c0-bcb4-daa3828ee7c6)
+
+source: [GitHub](https://github.com/SatadruMukherjee/Data-Preprocessing-Models/blob/main/Kafka%20Producer%20Internals.png)
