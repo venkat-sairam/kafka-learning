@@ -36,6 +36,74 @@ Why is Commit Important?
 - **Fault Tolerance:** Offsets stored in Kafka allow a consumer to resume from where it left off, even after a crash.
 - **Load Balancing:** Commit offsets help ensure smooth partition rebalancing when new consumers join or leave a group.
 
+---
 
+### What is Auto Offset Reset?
+
+In Kafka, **`auto.offset.reset`** is a consumer configuration setting that determines what happens when a consumer starts reading a partition but no committed offset is available. This situation can occur in the following cases:
+- The consumer group is reading the partition for the first time.
+- The committed offset has been deleted (e.g., due to retention policies).
+- The offset is out of range (e.g., messages older than the topic's retention period have been deleted).
+
+---
+
+### Available Options for `auto.offset.reset`
+
+### 1. `earliest`
+- The consumer starts reading from the **beginning of the partition**.
+
+### 2. `latest` (default)
+- The consumer starts reading from the **end of the partition**, ignoring older messages.
+- Suitable for real-time applications where only new messages are relevant.
+
+### 3. `none`
+- The consumer throws an exception if no committed offset is found.
+- Useful for strict control where processing incorrect data is unacceptable.
+
+---
+
+### How It Works
+
+- When a Kafka consumer starts, it checks for committed offsets for each partition.
+- If a committed offset exists, the consumer resumes reading from that point.
+- If no offset is available, the behavior depends on the `auto.offset.reset` setting.
+
+---
+
+## Example Scenarios
+
+### `earliest`
+If `auto.offset.reset=earliest`:
+- The consumer reads all available messages from the beginning of the topic.
+- Example Use Case: A data pipeline that must process historical data.
+
+### `latest`
+If `auto.offset.reset=latest`:
+- The consumer ignores older messages and reads only new messages.
+- Example Use Case: A real-time application processing live streams.
+
+### `none`
+If `auto.offset.reset=none`:
+- The consumer throws an error if no offset is available.
+- Example Use Case: Systems requiring strict offset management and error handling.
+
+---
+
+## Configuration Example
+
+Here’s how to configure `auto.offset.reset` using the `kafka-python` library:
+
+```python
+from kafka import KafkaConsumer
+
+consumer = KafkaConsumer(
+    'test-topic',
+    bootstrap_servers=['localhost:9092'],
+    group_id='test-group',
+    auto_offset_reset='earliest'  # Options: 'earliest', 'latest', 'none'
+)
+
+for message in consumer:
+    print(f"Partition: {message.partition}, Offset: {message.offset}, Value: {message.value}")
 
 
