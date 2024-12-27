@@ -13,6 +13,8 @@ To handle large volumes of data efficiently, Kafka introduces consumer groups. A
 - It provides fault tolerance, as if one consumer fails, others can take over its partitions.
 - It scales horizontally, as adding more consumers to the group increases the system's capacity to handle messages.
 If a consumer in the group stops working, the remaining consumers take over its partitions, ensuring no data is lost. Consumer groups make it easy to scale message processing by adding more consumers to the group.
-<div style="text-align: justify;">
+
 All consumers in the group share a group ID, which helps Kafka track their progress. Each group processes messages independently, so multiple groups can read from the same topic without interfering with each other. Consumer groups are a powerful way to handle large amounts of data efficiently and ensure reliability in distributed systems.
-</div>
+
+
+When the number of consumers are more than the total number of partitions in a topic, then the extra consumers will be kept in IDLE state by kafka.
