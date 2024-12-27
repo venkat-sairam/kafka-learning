@@ -18,3 +18,24 @@ All consumers in the group share a group ID, which helps Kafka track their progr
 
 
 When the number of consumers are more than the total number of partitions in a topic, then the extra consumers will be kept in IDLE state by kafka.
+
+---
+### Consumer offsets
+
+### What is Consumer Commit in Kafka?
+
+When a Kafka consumer reads messages from a topic, it keeps track of the progress by maintaining an offset for each partition it reads. The offset is essentially a pointer to the next message to be consumed. To ensure fault tolerance and avoid processing the same messages repeatedly, consumers commit their offsets to Kafka
+
+![image](https://github.com/user-attachments/assets/b19fadc3-a38a-49ed-9f75-ebae31829232)
+
+[Image credits](https://github.com/user-attachments/assets/9c1be0ce-ef13-4186-a7e6-265d4644678c)
+
+Why is Commit Important?
+
+- **Avoid Re-Processing:** By committing offsets, the consumer avoids reading the same messages again after restarting.
+- **Fault Tolerance:** Offsets stored in Kafka allow a consumer to resume from where it left off, even after a crash.
+- **Load Balancing:** Commit offsets help ensure smooth partition rebalancing when new consumers join or leave a group.
+
+
+
+
